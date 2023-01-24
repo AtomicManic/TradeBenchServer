@@ -21,4 +21,4 @@ class BodyNotSent extends BadRequest {
   }
 }
 
-module.exports = { PropertyExist, BodyNotSent };
+module.exports = { PropertyExist, BodyNotSent, BadRequest };
