@@ -1,8 +1,8 @@
-const jwt = require("jsonwebtoken");
 const usersRepository = require("../repositories/utils/userRepo.object");
 const bcrypt = require("bcrypt");
 const { isEmail } = require("./../validators/email.validator");
 const { bodyValidator } = require("./../validators/body.validator");
+const { generateToken } = require("./../utils/token.generator");
 const {
   MissingPropertyError,
   RegisterError,
@@ -40,12 +40,4 @@ exports.authController = {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     res.status(200).json({ decoded });
   },
-};
-
-exports.generateToken = (user) => {
-  const token = jwt.sign(
-    { id: user.id, fullName: user.fullName, email: user.email },
-    process.env.JWT_SECRET
-  );
-  return token;
 };

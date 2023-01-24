@@ -3,7 +3,7 @@ const { isValidObjectId } = require("./../validators/mongoId.validator");
 const registerValidator = require("./../validators/user.validator");
 const bcrypt = require("bcrypt");
 const { bodyValidator } = require("./../validators/body.validator");
-const { generateToken } = require("./auth.controller");
+const { generateToken } = require("./../utils/token.generator");
 const { PropertyExist, BodyNotSent } = require("../errors/BadRequest.errors");
 const {
   MissingPropertyError,
