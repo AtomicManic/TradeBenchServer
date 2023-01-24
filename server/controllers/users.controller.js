@@ -3,6 +3,7 @@ const { isValidObjectId } = require("./../validators/mongoId.validator");
 const registerValidator = require("./../validators/user.validator");
 const bcrypt = require("bcrypt");
 const { bodyValidator } = require("./../validators/body.validator");
+const { generateToken } = require("./auth.controller");
 const { PropertyExist, BodyNotSent } = require("../errors/BadRequest.errors");
 const {
   MissingPropertyError,
@@ -48,7 +49,13 @@ exports.usersController = {
     const hashedPassword = await privateHashPassword(User.password);
     User = { ...User, password: hashedPassword };
     const data = await usersRepository.create(User);
-    res.status(201).json({ data });
+    if (!data) throw new ServerUnableError("register");
+    const token = generateToken({
+      email: User.email,
+      id: User._id,
+      fullName: User.fullName,
+    });
+    res.status(201).json({ token });
   },
 
   updateUser: async (req, res) => {
