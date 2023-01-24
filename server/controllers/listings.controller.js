@@ -1,7 +1,11 @@
 const listingsRepository = require("../repositories/utils/listingRepo.object");
 const { isValidObjectId } = require("./../validators/mongoId.validator");
 const { bodyValidator } = require("./../validators/body.validator");
-const { PropertyExist, BodyNotSent } = require("../errors/BadRequest.errors");
+const {
+  PropertyExist,
+  BodyNotSent,
+  BadRequest,
+} = require("../errors/BadRequest.errors");
 const {
   MissingPropertyError,
   InvalidProperty,
@@ -18,6 +22,12 @@ exports.listingsController = {
   getListings: async (req, res) => {
     const data = await listingsRepository.find();
     if (!data) throw new EntityNotFound("Listings");
+    res.status(200).json(data);
+  },
+
+  getActiveListings: async (req, res) => {
+    const data = await listingsRepository.findActive();
+    if (!data) throw new EntityNotFound("Active listings");
     res.status(200).json(data);
   },
 
@@ -72,6 +82,23 @@ exports.listingsController = {
     const data = await listingsRepository.update(id, Listing);
     if (!data) throw new ServerUnableError("update");
     res.status(201).json(data);
+  },
+
+  updateStatus: async (req, res) => {
+    bodyValidator(req);
+    if (!req.params.id || req.params.id === ":id")
+      throw new MissingPropertyError("ID");
+    if (!isValidObjectId(req.params.id)) throw new InvalidProperty("ID");
+    if (!req.body.status) throw new MissingPropertyError("status");
+    if (!(req.body.status === "active" || req.body.status === "disabled"))
+      throw new BadRequest("invalid status");
+    const id = req.params.id;
+    const status = req.body.status;
+    const data = await listingsRepository.update(id, { status });
+    if (!data) throw new ServerUnableError("update");
+    res.status(200).json({
+      message: `Listing with id: ${id} status was successfully updated to ${status}`,
+    });
   },
 
   removeListing: async (req, res) => {

@@ -6,8 +6,10 @@ const ListingSchema = new Schema(
     lon: { type: Number, requires: true },
     tags: { type: [String], required: false, unique: false },
     number_of_items: { type: Number, required: true, unique: false },
-    images: { type: [String], required: false, unique: false }, // images url will be stored here refrencing their url in cloudinary
+    images: { type: [String], required: false, unique: false },
+    status: { type: String, default: "active" },
   },
+  { timestamps: true },
   { collection: "listings" }
 );
 

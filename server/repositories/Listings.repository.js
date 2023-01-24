@@ -9,6 +9,10 @@ module.exports = class ListingsRepository {
     return this.storage.find();
   }
 
+  findActive() {
+    return this.storage.findByAttribute("status", "active");
+  }
+
   retrieve(id) {
     return this.storage.retrieve(id);
   }
