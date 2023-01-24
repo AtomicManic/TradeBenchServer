@@ -21,6 +21,12 @@ exports.listingsController = {
     res.status(200).json(data);
   },
 
+  getActiveListings: async (req, res) => {
+    const data = await listingsRepository.findActive();
+    if (!data) throw new EntityNotFound("Active listings");
+    res.status(200).json(data);
+  },
+
   getListing: async (req, res) => {
     if (!req.params || !req.params.id || req.params.id === ":id")
       throw new MissingPropertyError("ID");
