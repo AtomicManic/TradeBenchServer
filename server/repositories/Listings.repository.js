@@ -13,6 +13,10 @@ module.exports = class ListingsRepository {
     return this.storage.findByAttribute("status", "active");
   }
 
+  findByProximity(curLon, curLat) {
+    return this.storage.getSortedByProximity(curLon, curLat);
+  }
+
   retrieve(id) {
     return this.storage.retrieve(id);
   }

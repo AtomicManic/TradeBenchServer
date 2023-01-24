@@ -52,6 +52,11 @@ exports.listingsController = {
     res.status(200).json(data);
   },
 
+  getNearestListings: async (req, res) => {
+    if (!req.query.lat) throw new MissingPropertyError("latitude");
+    if (!req.query.lon) throw new MissingPropertyError("longtitude");
+  },
+
   createListing: async (req, res) => {
     bodyValidator(req);
     if (!req.body.lat) throw new MissingPropertyError("latitude");

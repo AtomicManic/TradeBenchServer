@@ -30,6 +30,35 @@ module.exports = class MongoStorage {
     return this.Model.find(obj);
   }
 
+  getSortedByProximity(curLon, curLat) {
+    const aggregation = this.Model.aggregate([
+      {
+        $project: {
+          geometry: {
+            type: "Point",
+            coordinates: ["$lon", "$lat"],
+          },
+          number_of_items: 1,
+          tags: 1,
+          images: 1,
+          updatedAt: 1,
+        },
+      },
+      {
+        $geoNear: {
+          near: {
+            type: "Point",
+            coordinates: [curLon, curLat],
+          },
+          distanceField: "distance",
+          spherical: true,
+        },
+      },
+    ]);
+
+    return aggregation;
+  }
+
   retrieve(id) {
     return this.Model.findById(id);
   }
