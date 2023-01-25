@@ -1,6 +1,7 @@
 const listingsRepository = require("../repositories/utils/listingRepo.object");
 const { isValidObjectId } = require("./../validators/mongoId.validator");
 const { bodyValidator } = require("./../validators/body.validator");
+const { validateLonLat } = require("./../validators/coordinates.validator");
 const {
   PropertyExist,
   BodyNotSent,
@@ -55,12 +56,22 @@ exports.listingsController = {
   getNearestListings: async (req, res) => {
     if (!req.query.lat) throw new MissingPropertyError("latitude");
     if (!req.query.lon) throw new MissingPropertyError("longtitude");
+    const lon = parseFloat(req.query.lon);
+    const lat = parseFloat(req.query.lat);
+    validateLonLat(lon, lat);
+    const data = await listingsRepository.findByProximity(lon, lat);
+    if (!data) throw new ServerUnableError("find");
+    res.status(200).json(data);
   },
 
   createListing: async (req, res) => {
     bodyValidator(req);
-    if (!req.body.lat) throw new MissingPropertyError("latitude");
-    if (!req.body.lon) throw new MissingPropertyError("longtitude");
+    if (!req.body.location) throw new MissingPropertyError("location");
+    const lon = req.body.location.coordinates[0];
+    if (!lon) throw new MissingPropertyError("longtitude");
+    const lat = req.body.location.coordinates[1];
+    if (!lat) throw new MissingPropertyError("latitude");
+    validateLonLat(lon, lat);
     if (!req.body.tags || req.body.tags.length === 0)
       throw new MissingPropertyError("tags");
     if (!req.body.number_of_items)

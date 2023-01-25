@@ -33,18 +33,6 @@ module.exports = class MongoStorage {
   getSortedByProximity(curLon, curLat) {
     const aggregation = this.Model.aggregate([
       {
-        $project: {
-          geometry: {
-            type: "Point",
-            coordinates: ["$lon", "$lat"],
-          },
-          number_of_items: 1,
-          tags: 1,
-          images: 1,
-          updatedAt: 1,
-        },
-      },
-      {
         $geoNear: {
           near: {
             type: "Point",
@@ -52,6 +40,7 @@ module.exports = class MongoStorage {
           },
           distanceField: "distance",
           spherical: true,
+          maxDistance: 5000,
         },
       },
     ]);
