@@ -2,8 +2,17 @@ const { Schema, model } = require("mongoose");
 
 const ListingSchema = new Schema(
   {
-    lat: { type: Number, required: true },
-    lon: { type: Number, requires: true },
+    location: {
+      type: {
+        type: String,
+        enum: ["Point"],
+        required: true,
+      },
+      coordinates: {
+        type: [Number],
+        required: true,
+      },
+    },
     tags: { type: [String], required: false, unique: false },
     number_of_items: { type: Number, required: true, unique: false },
     images: { type: [String], required: false, unique: false },
@@ -13,4 +22,5 @@ const ListingSchema = new Schema(
   { collection: "listings" }
 );
 
+ListingSchema.index({ location: "2dsphere" });
 module.exports = model("Listing", ListingSchema);
