@@ -23,4 +23,17 @@ const ListingSchema = new Schema(
 );
 
 ListingSchema.index({ location: "2dsphere" });
-module.exports = model("Listing", ListingSchema);
+const Listing = model("Listing", ListingSchema);
+
+const changeStream = Listing.watch();
+changeStream.on("change", async (change) => {
+  if (
+    change.operationType === "update" &&
+    change.updateDescription.updatedFields.number_of_items === 0
+  ) {
+    const listingID = change.documentKey._id;
+    await Listing.updateOne({ _id: listingID }, { status: "disabled" });
+  }
+});
+
+module.exports = Listing;
