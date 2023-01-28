@@ -41,6 +41,7 @@ module.exports = class MongoStorage {
           distanceField: "distance",
           spherical: true,
           maxDistance: 5000,
+          query: { status: "active" },
         },
       },
     ]);

@@ -47,7 +47,6 @@ exports.listingsController = {
     if (!req.query.lat) throw new MissingPropertyError("latitude");
     if (!req.query.lon) throw new MissingPropertyError("longtitude");
     const { lat, lon } = req.query;
-    console.log(lat, lon);
     const data = await listingsRepository.retrieveByLoction(lat, lon);
     if (!data) throw new EntityNotFound("listing");
     res.status(200).json(data);
